@@ -92,7 +92,7 @@ function splitTextIntoLines(text, maxLineLength) {
 
 async function generateCaptions(transcription) {
   let vttContent = "WEBVTT\n\n";
-  const maxLineLength = 35;
+  const maxLineLength = 25;
 
   transcription.segments.forEach((segment) => {
     const startTime = formatTime(segment.start);
@@ -117,7 +117,7 @@ function formatTime(seconds) {
 }
 
 async function addCaptionsToVideo() {
-  const command = `${ffmpeg} -y -i "${INPUT_VIDEO}" -vf subtitles="${CAPTIONS_FILE}" -c:a copy "${OUTPUT_VIDEO}"`;
+  const command = `${ffmpeg} -y -i "${INPUT_VIDEO}" -vf "subtitles=${CAPTIONS_FILE}:force_style='FontSize=12'" -c:a copy "${OUTPUT_VIDEO}"`;
   console.log("Executing FFmpeg command:", command);
   const { stdout, stderr } = await execAsync(command);
   console.log("FFmpeg stdout:", stdout);

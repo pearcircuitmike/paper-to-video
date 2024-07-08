@@ -6,7 +6,7 @@ import path from "path";
 dotenv.config();
 
 async function generateAudio(script) {
-  const voice_id = "9N8nIBnvZ0Hbs6qhIqpt";
+  const voice_id = "kmSVBPu7loj4ayNinwWM";
   const options = {
     method: "POST",
     headers: {
@@ -17,8 +17,9 @@ async function generateAudio(script) {
       text: script,
       model_id: "eleven_multilingual_v2",
       voice_settings: {
-        stability: 0.5,
+        stability: 0.3,
         similarity_boost: 0.5,
+        style_e,
       },
     }),
   };

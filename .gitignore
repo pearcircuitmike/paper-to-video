@@ -37,4 +37,5 @@ yarn-error.log*
 output/*
 samples/*
 trimmed_clips/*
+music/*
 node_modules
