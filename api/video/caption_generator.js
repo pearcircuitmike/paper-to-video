@@ -115,9 +115,8 @@ function formatTime(seconds) {
   const date = new Date(seconds * 1000);
   return date.toISOString().substr(11, 12);
 }
-
 async function addCaptionsToVideo() {
-  const command = `${ffmpeg} -y -i "${INPUT_VIDEO}" -vf "subtitles=${CAPTIONS_FILE}:force_style='FontSize=12'" -c:a copy "${OUTPUT_VIDEO}"`;
+  const command = `${ffmpeg} -y -i "${INPUT_VIDEO}" -vf "subtitles=${CAPTIONS_FILE}:force_style='FontSize=12,MarginV=30'" -c:a copy "${OUTPUT_VIDEO}"`;
   console.log("Executing FFmpeg command:", command);
   const { stdout, stderr } = await execAsync(command);
   console.log("FFmpeg stdout:", stdout);

@@ -9,14 +9,24 @@ dotenv.config();
 
 const execAsync = promisify(exec);
 const OUTPUT_DIR = path.join(process.cwd(), "output");
+const MUSIC_DIR = path.join(process.cwd(), "music");
 const INPUT_VIDEO = path.join(OUTPUT_DIR, "video_with_captions.mp4");
 const OUTPUT_VIDEO = path.join(OUTPUT_DIR, "youtube_shorts_video.mp4");
 
 const logStep = (step) => console.log(`\n=== ${step} ===`);
 const logError = (message) => console.error(`ERROR: ${message}`);
 
+async function getRandomSong() {
+  const songs = await fs.readdir(MUSIC_DIR);
+  const songFiles = songs.filter(
+    (file) => file.startsWith("song") && file.endsWith(".mp3")
+  );
+  const randomSong = songFiles[Math.floor(Math.random() * songFiles.length)];
+  return path.join(MUSIC_DIR, randomSong);
+}
+
 async function convertToYoutubeShorts(inputPath, outputPath) {
-  logStep("Converting video to YouTube Shorts format");
+  logStep("Converting video to YouTube Shorts format with background music");
 
   // Ensure the output directory exists
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
@@ -31,11 +41,9 @@ async function convertToYoutubeShorts(inputPath, outputPath) {
     // File doesn't exist, which is fine
   }
 
-  const command = `${ffmpeg} -i "${inputPath}" \
-    -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920" \
-    -c:v libx264 -preset slow -crf 18 \
-    -c:a aac -b:a 128k -ar 44100 -ac 2 \
-    -y "${outputPath}"`;
+  const randomSong = await getRandomSong();
+
+  const command = `${ffmpeg} -i "${inputPath}" -i "${randomSong}" -filter_complex "[0:a]volume=1[a1];[1:a]volume=0.35[a2];[a1][a2]amix=inputs=2:duration=shortest" -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -ar 44100 -ac 2 -shortest -y "${outputPath}"`;
 
   console.log("Executing FFmpeg command:", command);
 
