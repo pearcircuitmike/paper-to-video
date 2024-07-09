@@ -19,7 +19,6 @@ async function generateAudio(script) {
       voice_settings: {
         stability: 0.3,
         similarity_boost: 0.5,
-        style_e,
       },
     }),
   };

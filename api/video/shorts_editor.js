@@ -43,7 +43,7 @@ async function convertToYoutubeShorts(inputPath, outputPath) {
 
   const randomSong = await getRandomSong();
 
-  const command = `${ffmpeg} -i "${inputPath}" -i "${randomSong}" -filter_complex "[0:a]volume=1[a1];[1:a]volume=0.35[a2];[a1][a2]amix=inputs=2:duration=shortest" -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -ar 44100 -ac 2 -shortest -y "${outputPath}"`;
+  const command = `${ffmpeg} -i "${inputPath}" -i "${randomSong}" -filter_complex "[0:a]volume=1[a1];[1:a]volume=0.1[a2];[a1][a2]amix=inputs=2:duration=shortest" -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -ar 44100 -ac 2 -shortest -y "${outputPath}"`;
 
   console.log("Executing FFmpeg command:", command);
 

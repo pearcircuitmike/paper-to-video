@@ -12,12 +12,26 @@ const NARRATION_AUDIO = path.join(OUTPUT_DIR, "narration.mp3");
 const VIDEO_NO_AUDIO = path.join(OUTPUT_DIR, "video_no_audio.mp4");
 const OUTPUT_VIDEO = path.join(OUTPUT_DIR, "video_with_audio.mp4");
 
+async function ensureOutputDirectoryExists() {
+  try {
+    await fs.access(OUTPUT_DIR);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      await fs.mkdir(OUTPUT_DIR, { recursive: true });
+    } else {
+      throw error;
+    }
+  }
+}
+
 async function removeAudioFromVideo() {
   try {
-    // Check if input files exist
+    await ensureOutputDirectoryExists();
+
+    // Check if input file exists
     await fs.access(BACKGROUND_VIDEO);
 
-    const command = `${ffmpeg} -i "${BACKGROUND_VIDEO}" -c copy -an "${VIDEO_NO_AUDIO}"`;
+    const command = `${ffmpeg} -y -i "${BACKGROUND_VIDEO}" -c copy -an "${VIDEO_NO_AUDIO}"`;
 
     console.log("Executing command to remove audio:", command);
 
@@ -35,11 +49,13 @@ async function removeAudioFromVideo() {
 
 async function addNarrationToVideo() {
   try {
+    await ensureOutputDirectoryExists();
+
     // Check if input files exist
     await fs.access(VIDEO_NO_AUDIO);
     await fs.access(NARRATION_AUDIO);
 
-    const command = `${ffmpeg} -i "${VIDEO_NO_AUDIO}" -i "${NARRATION_AUDIO}" -c:v copy -map 0:v -map 1:a -c:a aac -b:a 192k -shortest "${OUTPUT_VIDEO}"`;
+    const command = `${ffmpeg} -y -i "${VIDEO_NO_AUDIO}" -i "${NARRATION_AUDIO}" -c:v copy -map 0:v -map 1:a -c:a aac -b:a 192k -shortest "${OUTPUT_VIDEO}"`;
 
     console.log("Executing command to add narration:", command);
 
